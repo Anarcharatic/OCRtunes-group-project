@@ -4,10 +4,10 @@
         "password": "password",
         "realName": "Zaman",
         "dob": "18/12/2007",
-        "favArtist": "peppa pig",
-        "favGenre": "Rap",
+        "favArtist": "ken carson",
+        "favGenre": "pop",
         "playlists": {
-            "peak": []
+            "essential": []
         }
     }
 }

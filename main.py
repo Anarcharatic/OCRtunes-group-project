@@ -83,7 +83,7 @@ def viewPlaylists(root, currentUser):
 
     viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
-    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
     backButton.pack(pady=25)
 
 def editPlaylists(root, currentUser):
@@ -93,7 +93,7 @@ def editPlaylists(root, currentUser):
     removeSongs = tk.Button(root, text="Remove songs from a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "remove"))
     renamePlaylist = tk.Button(root, text="Rename a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "rename"))
     deletePlaylist = tk.Button(root, text="Delete a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "delete"))
-    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
     mainTitle.pack(pady=20)
     addSongs.pack(pady=20)
     removeSongs.pack(pady=20)
@@ -126,7 +126,7 @@ def playlistSelection(root, currentUser, playlistFunc):
 
     viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
-    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: editPlaylists(root, currentUser))
     backButton.pack(pady=25)
 
     viewplaylistListBox.bind("<<ListboxSelect>>", lambda event: processPlaylist(event, root, currentUser, playlistFunc, playlistNames))
@@ -147,12 +147,51 @@ def processPlaylist(event, root, currentUser, playlistFunc, playlistNames):
 
 def addSongsPlaylist(root, currentUser, currentPlaylist):
     clearScreen(root)
+    mainTitle = tk.Label(root, text="ADD SONG", font=("Arial", 30))
+    mainTitle.pack()
+    libraryFrame = tk.Frame(root)
+    libraryFrame.pack(fill="both", expand=True)
+    libraryScrollbar = tk.Scrollbar(libraryFrame)
+    libraryScrollbar.pack(side="right", fill="y")
+    libraryListBox = tk.Listbox(libraryFrame, yscrollcommand=libraryScrollbar.set, font=("Arial", 18))
+
+    for i in sortedSongList:
+        libraryListBox.insert(tk.END, f"Song: {i.title}, Artist: {i.artist}, Genre: {i.genre}, Length: {i.length // 60}:{i.length % 60:02d}") #Specifies all the information about each song
+        #The length of the song is formatted in a stadard way using :02d in order to include the 0 in single digit numbers
+    
+    libraryListBox.pack(side="left", fill="both", expand=True)
+
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton.pack(pady=25)
+
+    libraryListBox.bind("<<ListboxSelect>>", lambda event: addSong(event, root, currentUser, currentPlaylist))
+
+def addSong(event, root, currentUser, currentPlaylist):
+    widget = event.widget 
+    index = widget.curselection()[0]
+    selectedSong = sortedSongList[index]
+
+    userFile[currentUser]["playlists"][currentPlaylist].append(selectedSong.title)
+    saveUserData()
+    editPlaylists(root, currentUser)
 
 def removeSongsPlaylist(root, currentUser, currentPlaylist):
     clearScreen(root)
 
 def renameChosenPlaylist(root, currentUser, currentPlaylist):
     clearScreen(root)
+    newPlaylistName = tk.StringVar()
+    mainTitle = tk.Label(root, text="RENAME PLAYLIST", font=("Arial", 30))
+    newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
+    confirmRenameButton = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: changePlaylistName(root, currentUser, currentPlaylist, str(newPlaylistName.get())))
+    mainTitle.pack()
+    newPlaylistEntry.pack(pady=20)
+    confirmRenameButton.pack(pady=20)
+
+def changePlaylistName(root, currentUser, currentPlaylist, newPlaylistName):
+    userFile[currentUser]["playlists"][newPlaylistName] = userFile[currentUser]["playlists"].pop(currentPlaylist) #replaces the key, which is the name of the playlist
+    saveUserData()
+    editPlaylists(root, currentUser)
 
 def confirmPlaylistDeletion(root, currentUser, currentPlaylist):
     clearScreen(root)

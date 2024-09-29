@@ -79,8 +79,7 @@ def viewPlaylists(root, currentUser):
     viewplaylistListBox = tk.Listbox(viewplaylistFrame, yscrollcommand=viewplaylistScrollbar.set, font=("Arial", 18))
 
     for i in userFile[currentUser]["playlists"]:
-        print(i)
-        viewplaylistListBox.insert(tk.END, f"{i}") #Specifies all the information about each song
+        viewplaylistListBox.insert(tk.END, f"{i}")
 
     viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
@@ -89,28 +88,87 @@ def viewPlaylists(root, currentUser):
 
 def editPlaylists(root, currentUser):
     clearScreen(root)
-    mainTitle = tk.Label(root, text="EDIT PLAYLISTS", font=("Arial", 30))
-    addSongs = tk.Button(root, text="Add songs to a playlist", font=("Arial", 18), command=lambda: addSongsPlaylist(root, currentUser))
-    removeSongs = tk.Button(root, text="Remove songs from a playlist", font=("Arial", 18), command=lambda: removeSongsPlaylist(root, currentUser))
-    renamePlaylist = tk.Button(root, text="Rename a playlist", font=("Arial", 18), command=lambda: renameChosenPlaylist(root, currentUser))
-    deletePlaylist = tk.Button(root, text="Delete a playlist", font=("Arial", 18), command=lambda: deleteChosenPlaylist(root, currentUser))
+    mainTitle = tk.Label(root, text="EDIT PLAYLIST MENU", font=("Arial", 30))
+    addSongs = tk.Button(root, text="Add songs to a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "add"))
+    removeSongs = tk.Button(root, text="Remove songs from a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "remove"))
+    renamePlaylist = tk.Button(root, text="Rename a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "rename"))
+    deletePlaylist = tk.Button(root, text="Delete a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "delete"))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    mainTitle.pack(pady=20)
+    addSongs.pack(pady=20)
+    removeSongs.pack(pady=20)
+    renamePlaylist.pack(pady=20)
+    deletePlaylist.pack(pady=20)
+    backButton.pack(pady=25)
+
+def playlistSelection(root, currentUser, playlistFunc):
+    clearScreen(root)
+    if playlistFunc == "add":
+        mainTitle = tk.Label(root, text="SELECT PLAYLIST TO ADD SONGS TO", font=("Arial", 30))
+    elif playlistFunc == "remove":
+        mainTitle = tk.Label(root, text="SELECT PLAYLIST TO REMOVE SONGS FROM", font=("Arial", 30))
+    elif playlistFunc == "rename":
+        mainTitle = tk.Label(root, text="SELECT PLAYLIST TO RENAME", font=("Arial", 30))
+    elif playlistFunc == "delete":
+        mainTitle = tk.Label(root, text="SELECT PLAYLIST TO DELETE", font=("Arial", 30))
     mainTitle.pack()
-    addSongs.pack()
-    removeSongs.pack()
-    renamePlaylist.pack()
-    deletePlaylist.pack()
+    viewplaylistFrame = tk.Frame(root)
+    viewplaylistFrame.pack(fill="both", expand=True)
+    viewplaylistScrollbar = tk.Scrollbar(viewplaylistFrame)
+    viewplaylistScrollbar.pack(side="right", fill="y")
+    viewplaylistListBox = tk.Listbox(viewplaylistFrame, yscrollcommand=viewplaylistScrollbar.set, font=("Arial", 18))
 
-def addSongsPlaylist(root, currentUser):
-    pass
+    playlistNames = list(userFile[currentUser]["playlists"].keys())
 
-def removeSongsPlaylist(root, currentUser):
-    pass
+    if playlistNames: #Confirms that the user actually has playlists in their profile
+        for i in playlistNames:
+            viewplaylistListBox.insert(tk.END, i)
 
-def renameChosenPlaylist(root, currentUser):
-    pass
+    viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
-def deleteChosenPlaylist(root, currentUser):
-    pass
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton.pack(pady=25)
+
+    viewplaylistListBox.bind("<<ListboxSelect>>", lambda event: processPlaylist(event, root, currentUser, playlistFunc, playlistNames))
+
+def processPlaylist(event, root, currentUser, playlistFunc, playlistNames):
+    widget = event.widget #Finds the widget that the user interacted with to determine the song they chose
+    index = widget.curselection()[0] #Finds the index of the song that the user chose
+    selectedPlaylist = playlistNames[index] #Obtains the object so the link can be accessed
+
+    if playlistFunc == "add":
+        addSongsPlaylist(root, currentUser, selectedPlaylist)
+    elif playlistFunc == "remove":
+        removeSongsPlaylist(root, currentUser, selectedPlaylist)
+    elif playlistFunc == "rename":
+        renameChosenPlaylist(root, currentUser, selectedPlaylist)
+    elif playlistFunc == "delete":
+        confirmPlaylistDeletion(root, currentUser, selectedPlaylist)
+
+def addSongsPlaylist(root, currentUser, currentPlaylist):
+    clearScreen(root)
+
+def removeSongsPlaylist(root, currentUser, currentPlaylist):
+    clearScreen(root)
+
+def renameChosenPlaylist(root, currentUser, currentPlaylist):
+    clearScreen(root)
+
+def confirmPlaylistDeletion(root, currentUser, currentPlaylist):
+    clearScreen(root)
+    mainTitle = tk.Label(root, text="CONFIRM PLAYLIST DELETION", font=("Arial", 30))
+    confirmText = tk.Label(root, text=f"Are you sure you want to delete the playlist {currentPlaylist}?", font=("Arial", 18))
+    yesButton = tk.Button(root, text="Yes", cursor="hand2", font=("Arial", 18), command=lambda: deletePlaylist(root, currentUser, currentPlaylist))
+    noButton = tk.Button(root, text="No", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    mainTitle.pack()
+    confirmText.pack(pady=20)
+    yesButton.pack(pady=20)
+    noButton.pack(pady=20)
+
+def deletePlaylist(root, currentUser, currentPlaylist):
+    userFile[currentUser]["playlists"].pop(currentPlaylist)
+    saveUserData()
+    mainMenu(root, currentUser)
 
 def createPlaylists(root, currentUser):
     clearScreen(root)

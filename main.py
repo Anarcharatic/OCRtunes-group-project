@@ -59,8 +59,58 @@ def clearScreen(root):
 
 #Functionality for displaying each of the genres and information about each genre
 
+def genreInfo(root, currentUser):
+    clearScreen(root)
+    mainTitle = tk.Label(root, text="GENRE INFORMATION", font=("Arial", 30))
+    mainTitle.pack(pady=20)
+    genreFrame = tk.Frame(root)
+    genreFrame.pack(fill="both", expand=True)
+    genreScrollbar = tk.Scrollbar(genreFrame)
+    genreScrollbar.pack(side="right", fill="y")
+    genreListBox = tk.Listbox(genreFrame, yscrollcommand=genreScrollbar.set, font=("Arial", 18))
 
+    insertedGenres = []
 
+    for i in sortedSongList:
+        if not i.genre in insertedGenres:
+            genreListBox.insert(tk.END, f"{i.genre}")
+            insertedGenres.append(i.genre)
+    
+    genreListBox.pack(side="left", fill="both", expand=True)
+
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton.pack(pady=25)
+
+    genreListBox.bind("<<ListboxSelect>>", lambda event: showGenreInfo(event, root, currentUser, insertedGenres))
+
+def showGenreInfo(event, root, currentUser, insertedGenres):
+    widget = event.widget
+    index = widget.curselection()[0]
+    selectedGenre = insertedGenres[index]
+
+    numSongs = 0
+    totalLength = 0
+
+    for i in sortedSongList:
+        if i.genre == selectedGenre:
+            numSongs += 1
+            totalLength += i.length
+
+    averageLength = round(totalLength / numSongs)
+    
+    clearScreen(root)
+
+    mainTitle = tk.Label(root, text="GENRE INFORMATION", font=("Arial", 30))
+    numSongsLabel = tk.Label(root, text=f"Number of songs of {selectedGenre} in the library: {str(numSongs)}", font=("Arial", 18))
+    totalLengthLabel = tk.Label(root, text=f"Total length of all songs in the library of {selectedGenre}: {totalLength // 60}m {totalLength - ((totalLength // 60) * 60)}s", font=("Arial", 18))
+    avgLengthLabel = tk.Label(root, text=f"Average length of all songs in the library of {selectedGenre}: {averageLength // 60}m {averageLength - ((averageLength // 60) * 60)}s", font=("Arial", 18))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: genreInfo(root, currentUser))
+
+    mainTitle.pack(pady=20)
+    numSongsLabel.pack(pady=20)
+    totalLengthLabel.pack(pady=20)
+    avgLengthLabel.pack(pady=20)
+    backButton.pack(pady=20)
 
 #Functionality for saving songs by a specific artist into a text file
 
@@ -537,7 +587,7 @@ def mainMenu(root, currentUser):
     libraryButton = tk.Button(root, text="View song library", cursor="hand2", font=("Arial", 18), command=lambda: libraryMenu(root, currentUser))
     playlistButton = tk.Button(root, text="Playlists", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
     discographyButton = tk.Button(root, text="Artist discography", cursor="hand2", font=("Arial", 18), command=lambda: artistDiscography(root, currentUser))
-    genreButton = tk.Button(root, text="View genres", cursor="hand2", font=("Arial", 18), command=lambda: artistDiscography(root, currentUser))
+    viewGenreButton = tk.Button(root, text="View genres", cursor="hand2", font=("Arial", 18), command=lambda: genreInfo(root, currentUser))
     quitButton = tk.Button(root, text="Quit", command=root.destroy, cursor="hand2", font=("Arial", 18))
 
     mainTitle.pack(pady=20)
@@ -546,7 +596,7 @@ def mainMenu(root, currentUser):
     libraryButton.pack(pady=20)
     playlistButton.pack(pady=20)
     discographyButton.pack(pady=20)
-    genreButton.pack(pady=20)
+    viewGenreButton.pack(pady=20)
     quitButton.pack(pady=20)
 
 # Functionality for the user logging in

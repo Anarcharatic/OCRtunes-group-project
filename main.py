@@ -180,7 +180,7 @@ def saveToFile(selectedArtist, errorMessage):
             f.write(f"{artistSongList}")
         errorMessage.configure(text="Sucessfully saved file.", fg="green")
     else:
-        errorMessage.configure(text="Save either failed or was cancelled.")
+        errorMessage.configure(text="Save either failed or was cancelled.", fg="red")
 
 # Functionality for all of the playlist functions
 
@@ -436,7 +436,7 @@ def autoCreatePlaylists(root, currentUser):
     newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
     timeLimitLabel = tk.Label(root, text="Enter in a time limit for the playlist (minutes):", font=("Arial", 18))
     timeLimitEntry = tk.Entry(root, textvariable=timeLimit)
-    genreSelectionLabel = tk.Label(root, text="Select a genre for the label to be: ", font=("Arial", 18))
+    genreSelectionLabel = tk.Label(root, text="Select a genre for the playlist to be: ", font=("Arial", 18))
     currentGenreSelected = tk.Label(root, text="Current genre: None", font=("Arial", 18))
 
     genreFrame = tk.Frame(root)

@@ -1,6 +1,9 @@
 import json
 import tkinter as tk
+from tkinter import filedialog
 import webbrowser
+
+#Object oriented programming use to easily create a number of songs
 
 class Song:
     def __init__(self, title: str, artist: str, genre: str, length: int, link: str):
@@ -43,15 +46,93 @@ sortedSongList = sorted(songList, key=lambda song: song.title) #Lambda is used h
 with open("users.json", "r") as f: #This creates a variable holding the information of the dictionary
     userFile = json.loads(f.read())
 
+#Essential functions that are used many times throughout the application
+
 def saveUserData(): #This function is called whenever there is a change in information so it is constantly up-to-date
     with open("users.json", "w") as f:
         saveData = json.dumps(userFile, indent=4)
         f.write(saveData)
 
+def clearScreen(root):
+    for i in root.winfo_children():
+        i.destroy()
+
+#Functionality for displaying each of the genres and information about each genre
 
 
-def artistDiscography():
-    pass
+
+
+#Functionality for saving songs by a specific artist into a text file
+
+def artistDiscography(root, currentUser):
+    clearScreen(root)
+    selectedArtist = tk.StringVar()
+    mainTitle = tk.Label(root, text="ARTIST MENU", font=("Arial", 30))
+    selectArtistLabel = tk.Label(root, text="Select an artist to see their available songs:", font=("Arial", 18))
+    currentArtistSelected = tk.Label(root, text="Current artist: None", font=("Arial", 18))
+
+    artistFrame = tk.Frame(root)
+    artistFrame.columnconfigure(0, weight=1)
+    artistFrame.columnconfigure(1, weight=1)
+    artistFrame.columnconfigure(2, weight=1)
+    artistFrame.columnconfigure(3, weight=1)
+    artistFrame.columnconfigure(4, weight=1)
+    artistFrame.columnconfigure(5, weight=1)
+    artistFrame.columnconfigure(6, weight=1)
+
+    button1 = tk.Button(artistFrame, text="Linkin Park", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Linkin Park"))
+    button1.grid(row=0, column=0)
+    button2 = tk.Button(artistFrame, text="Nirvana", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Nirvana"))
+    button2.grid(row=0, column=1)
+    button3 = tk.Button(artistFrame, text="Michael Jackson", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Michael Jackson"))
+    button3.grid(row=0, column=2)
+    button4 = tk.Button(artistFrame, text="Playboi Carti", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Playboi Carti"))
+    button4.grid(row=0, column=3)
+    button5 = tk.Button(artistFrame, text="Kendrick Lamar", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Kendrick Lamar"))
+    button5.grid(row=0, column=4)
+    button6 = tk.Button(artistFrame, text="Ken Carson", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Ken Carson"))
+    button6.grid(row=0, column=5)
+    button7 = tk.Button(artistFrame, text="Mitski", cursor="hand2", font=("Arial", 18), command=lambda: editArtist(currentArtistSelected, selectedArtist, "Mitski"))
+    button7.grid(row=0, column=6)
+
+    errorMessage = tk.Label(root, text="", font=("Arial", 18), fg="red")
+    confirmButton = tk.Button(root, text="Save to text file", cursor="hand2", font=("Arial", 18), command=lambda: saveToFile(str(selectedArtist.get()), errorMessage))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+
+    mainTitle.pack(pady=20)
+    selectArtistLabel.pack(pady=20)
+    currentArtistSelected.pack(pady=20)
+    artistFrame.pack(pady=20)
+    errorMessage.pack(pady=20)
+    confirmButton.pack(pady=20)
+    backButton.pack(pady=20)
+    #Artists songs can be saved to a text file
+
+def editArtist(currentArtistSelected, selectedArtist, newArtist):
+    selectedArtist.set(newArtist)
+    currentArtistSelected.configure(text=f"Current genre: {newArtist}")
+
+def saveToFile(selectedArtist, errorMessage):
+    if selectedArtist == "":
+        errorMessage.configure(text="You did not select an artist, please try again.")
+        return
+    
+    filePath = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text file", "*.txt")])
+
+    artistSongList = []
+
+    for i in sortedSongList:
+        if i.artist == selectedArtist:
+            artistSongList.append(i.title)
+
+    if filePath: #Check if the user actually selected a path
+        with open(filePath, "w") as f:
+            f.write(f"{artistSongList}")
+        errorMessage.configure(text="Sucessfully saved file.", fg="green")
+    else:
+        errorMessage.configure(text="Save either failed or was cancelled.")
+
+# Functionality for all of the playlist functions
 
 def playlistMenu(root, currentUser):
     clearScreen(root)
@@ -370,7 +451,7 @@ def autoCreateNewPlaylist(root, currentUser, timeLimit, newPlaylistName, selecte
     saveUserData()
     mainMenu(root, currentUser)
 
-    #auto generate the playlist
+#Functionality for the library menu
 
 def libraryMenu(root, currentUser): #Shows a variety of songs which the user can click on to play
     clearScreen(root)
@@ -400,6 +481,8 @@ def songSelected(event): #I wouldve built in the music into the app but i dont w
 
     webbrowser.open(selectedSong.link) #Opens the song the user selected in a new browser window in spotify and automatically plays
 
+#Functionality for changing the favourite genre of the user
+
 def changeFavouriteGenre(newFavGenre, currentUser, root):
     userFile[currentUser]["favGenre"] = newFavGenre
     saveUserData()
@@ -421,6 +504,8 @@ def editFavouriteGenre(root, currentUser):
     genreEntry.pack(pady=20)
     confirmButton.pack(pady=20)
 
+#Functionality for changing the favourite artist of the user
+
 def changeFavouriteArtist(newFavArtist, currentUser, root):
     userFile[currentUser]["favArtist"] = newFavArtist
     saveUserData()
@@ -441,22 +526,19 @@ def editFavouriteArtist(root, currentUser):
     enterArtist.pack(pady=20)
     artistEntry.pack(pady=20)
     confirmButton.pack(pady=20)
-    
+
+#The main menu where all functions of the program are accessible
+
 def mainMenu(root, currentUser):
     clearScreen(root)
     mainTitle = tk.Label(root, text="MAIN MENU", font=("Arial", 30))
-    artistButton = tk.Button(root, text="Edit favourite artist", cursor="hand2", font=("Arial", 18))
-    genreButton = tk.Button(root, text="Edit favourite genre", cursor="hand2", font=("Arial", 18))
-    libraryButton = tk.Button(root, text="View song library", cursor="hand2", font=("Arial", 18))
-    playlistButton = tk.Button(root, text="Playlists", cursor="hand2", font=("Arial", 18))
-    discographyButton = tk.Button(root, text="Artist discography", cursor="hand2", font=("Arial", 18))
+    artistButton = tk.Button(root, text="Edit favourite artist", cursor="hand2", font=("Arial", 18), command=lambda: editFavouriteArtist(root, currentUser))
+    genreButton = tk.Button(root, text="Edit favourite genre", cursor="hand2", font=("Arial", 18), command=lambda: editFavouriteGenre(root, currentUser))
+    libraryButton = tk.Button(root, text="View song library", cursor="hand2", font=("Arial", 18), command=lambda: libraryMenu(root, currentUser))
+    playlistButton = tk.Button(root, text="Playlists", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
+    discographyButton = tk.Button(root, text="Artist discography", cursor="hand2", font=("Arial", 18), command=lambda: artistDiscography(root, currentUser))
+    genreButton = tk.Button(root, text="View genres", cursor="hand2", font=("Arial", 18), command=lambda: artistDiscography(root, currentUser))
     quitButton = tk.Button(root, text="Quit", command=root.destroy, cursor="hand2", font=("Arial", 18))
-
-    artistButton.configure(command=lambda: editFavouriteArtist(root, currentUser))
-    genreButton.configure(command=lambda: editFavouriteGenre(root, currentUser))
-    libraryButton.configure(command=lambda: libraryMenu(root, currentUser))
-    playlistButton.configure(command=lambda: playlistMenu(root, currentUser))
-    discographyButton.configure(command=lambda: artistDiscography())
 
     mainTitle.pack(pady=20)
     artistButton.pack(pady=20)
@@ -464,20 +546,35 @@ def mainMenu(root, currentUser):
     libraryButton.pack(pady=20)
     playlistButton.pack(pady=20)
     discographyButton.pack(pady=20)
+    genreButton.pack(pady=20)
     quitButton.pack(pady=20)
 
+# Functionality for the user logging in
 
-def clearScreen(root):
-    for i in root.winfo_children():
-        i.destroy()
+def loginScreen(root):
+    clearScreen(root)
+    inputUsername = tk.StringVar()
+    inputPassword = tk.StringVar()
+    mainTitle = tk.Label(root, text="USER LOGIN", font=("Arial", 30))
+    usernameLabel = tk.Label(root, text="Username: ", font=("Arial", 18))
+    usernameEntry = tk.Entry(root, textvariable=inputUsername)
+    passwordLabel = tk.Label(root, text="Password: ", font=("Arial", 18))
+    passwordEntry = tk.Entry(root, textvariable=inputPassword)
+    errorMessage = tk.Label(root, text="", font=("Arial", 14), fg="red")
 
-def back_clicked(mainTitle, logInButton, signUpButton, quitButton, *args): #*Args is used so functionality works for both login and signup without the usage of a lot of parameters
-    mainTitle.config(text="LOGIN/SIGNUP")
-    logInButton.pack(pady=50)
-    signUpButton.pack(pady=50)
-    quitButton.pack(pady=50)
-    for i in args:
-        i.destroy()
+    loginButton = tk.Button(root, text="Log In", cursor="hand2", font=("Arial", 18), command=lambda: userLogin(inputUsername, inputPassword, errorMessage, root))
+
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18))
+    backButton.configure(command=lambda: main(root))
+
+    mainTitle.pack(pady=20)
+    usernameLabel.pack(pady=5)
+    usernameEntry.pack(pady=20)
+    passwordLabel.pack(pady=5)
+    passwordEntry.pack(pady=20)
+    errorMessage.pack(pady=5)
+    loginButton.pack(pady=20)
+    backButton.pack(pady=50)
 
 def userLogin(inputUsername, inputPassword, errorMessage, root):
     username = inputUsername.get()
@@ -490,6 +587,75 @@ def userLogin(inputUsername, inputPassword, errorMessage, root):
         errorMessage.config(text="Logging in...", fg="green")
         clearScreen(root)
         mainMenu(root, str(username))
+
+#Functionality for signing up
+
+def signUpScreen(root):
+    clearScreen(root)
+
+    inputUsername = tk.StringVar()
+    inputPassword = tk.StringVar()
+    realName = tk.StringVar()
+    userDay = tk.StringVar()
+    userMonth = tk.StringVar()
+    userYear = tk.StringVar()
+
+    mainTitle = tk.Label(root, text="USER REGISTRATION", font=("Arial", 30))
+
+    usernameLabel = tk.Label(root, text="Username: ", font=("Arial", 18))
+    usernameEntry = tk.Entry(root, textvariable=inputUsername)
+
+    passwordLabel = tk.Label(root, text="Password: ", font=("Arial", 18))
+    passwordEntry = tk.Entry(root, textvariable=inputPassword)
+
+    realNameLabel = tk.Label(root, text="Real name: ", font=("Arial", 18))
+    realNameEntry = tk.Entry(root, textvariable=realName)
+
+    dobLabel = tk.Label(root, text="Date of birth (DD/MM/YYYY): ", font=("Arial", 18))
+    dobFrame = tk.Frame(root)
+    dobFrame.columnconfigure(0, weight=1)
+    dobFrame.columnconfigure(1, weight=1)
+    dobFrame.columnconfigure(2, weight=1)
+
+    dayEntry = tk.Entry(dobFrame, textvariable=userDay)
+    dayEntry.grid(row=0, column=0)
+    monthEntry = tk.Entry(dobFrame, textvariable=userMonth)
+    monthEntry.grid(row=0, column=1)
+    yearEntry = tk.Entry(dobFrame, textvariable=userYear)
+    yearEntry.grid(row=0, column=2)
+
+    favArtist = tk.StringVar()
+    favGenre = tk.StringVar()
+
+    artistLabel = tk.Label(root, text="Favourite artist: ", font=("Arial", 18))
+    artistEntry = tk.Entry(root, textvariable=favArtist)
+    genreLabel = tk.Label(root, text="Favourite genre: ", font=("Arial", 18))
+    genreEntry = tk.Entry(root, textvariable=favGenre)
+
+    errorMessage = tk.Label(root, text="", font=("Arial", 14), fg="red")
+
+    completeSignupButton = tk.Button(root, text="Sign Up", cursor="hand2", font=("Arial", 18))
+    completeSignupButton.configure(command=lambda: userRegistration(inputUsername, inputPassword, realName, userDay, userMonth, userYear, favArtist, favGenre, errorMessage, root))
+
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18))
+    backButton.configure(command=lambda: main(root))
+
+    mainTitle.pack(pady=20)
+    usernameLabel.pack(pady=5)
+    usernameEntry.pack(pady=20)
+    passwordLabel.pack(pady=5)
+    passwordEntry.pack(pady=20)
+    realNameLabel.pack(pady=5)
+    realNameEntry.pack(pady=5)
+    dobLabel.pack(pady=5)
+    dobFrame.pack(fill="x")
+    artistLabel.pack(pady=5)
+    artistEntry.pack(pady=5)
+    genreLabel.pack(pady=5)
+    genreEntry.pack(pady=5)
+    errorMessage.pack(pady=5)
+    completeSignupButton.pack(pady=5)
+    backButton.pack(pady=20)
 
 def userRegistration(inputUsername, inputPassword, realName, userDay, userMonth, userYear, favArtist, favGenre, errorMessage, root):
 
@@ -547,6 +713,7 @@ def userRegistration(inputUsername, inputPassword, realName, userDay, userMonth,
     
     else:
         errorMessage.config(text="Creating account...", fg="green")
+
         userFile.update({str(username): { #Format used in order to save data
             "username": str(username),
             "password": str(password),
@@ -561,106 +728,15 @@ def userRegistration(inputUsername, inputPassword, realName, userDay, userMonth,
         clearScreen(root)
         mainMenu(root, str(username))
 
-def signin_clicked(buttonFunc, root, mainTitle, logInButton, signUpButton, quitButton):
-
-    logInButton.pack_forget()
-    signUpButton.pack_forget()
-    quitButton.pack_forget()
-
-    #These buttons will both be used in signup and login functions
-
-    inputUsername = tk.StringVar()
-    inputPassword = tk.StringVar()
-    usernameLabel = tk.Label(root, text="Username: ", font=("Arial", 18))
-    usernameEntry = tk.Entry(root, textvariable=inputUsername)
-    passwordLabel = tk.Label(root, text="Password: ", font=("Arial", 18))
-    passwordEntry = tk.Entry(root, textvariable=inputPassword)
-    errorMessage = tk.Label(root, text="", font=("Arial", 14), fg="red")
-    
-    if buttonFunc == "login":
-        mainTitle.config(text="LOGIN")
-
-        completeLoginButton = tk.Button(root, text="Log In", cursor="hand2", font=("Arial", 18))
-        completeLoginButton.configure(command=lambda: userLogin(inputUsername, inputPassword, errorMessage, root))
-
-        backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18))
-        backButton.configure(command=lambda: back_clicked(mainTitle, logInButton, signUpButton, quitButton, usernameLabel, usernameEntry, passwordLabel, passwordEntry, errorMessage, completeLoginButton, backButton))
-
-        usernameLabel.pack(pady=5)
-        usernameEntry.pack(pady=20)
-        passwordLabel.pack(pady=5)
-        passwordEntry.pack(pady=20)
-        errorMessage.pack(pady=5)
-        completeLoginButton.pack(pady=20)
-        backButton.pack(pady=50)
-
-    elif buttonFunc == "signup":
-        mainTitle.config(text="SIGN UP")
-
-        realName = tk.StringVar()
-
-        realNameLabel = tk.Label(root, text="Real name: ", font=("Arial", 18))
-        realNameEntry = tk.Entry(root, textvariable=realName)
-
-        userDay = tk.StringVar()
-        userMonth = tk.StringVar()
-        userYear = tk.StringVar()
-
-        dobLabel = tk.Label(root, text="Date of birth (DD/MM/YYYY): ", font=("Arial", 18))
-        dobFrame = tk.Frame(root)
-        dobFrame.columnconfigure(0, weight=1)
-        dobFrame.columnconfigure(1, weight=1)
-        dobFrame.columnconfigure(2, weight=1)
-
-        dayEntry = tk.Entry(dobFrame, textvariable=userDay)
-        dayEntry.grid(row=0, column=0)
-        monthEntry = tk.Entry(dobFrame, textvariable=userMonth)
-        monthEntry.grid(row=0, column=1)
-        yearEntry = tk.Entry(dobFrame, textvariable=userYear)
-        yearEntry.grid(row=0, column=2)
-
-        favArtist = tk.StringVar()
-        favGenre = tk.StringVar()
-
-        artistLabel = tk.Label(root, text="Favourite artist: ", font=("Arial", 18))
-        artistEntry = tk.Entry(root, textvariable=favArtist)
-        genreLabel = tk.Label(root, text="Favourite genre: ", font=("Arial", 18))
-        genreEntry = tk.Entry(root, textvariable=favGenre)
-
-        completeSignupButton = tk.Button(root, text="Sign Up", cursor="hand2", font=("Arial", 18))
-        completeSignupButton.configure(command=lambda: userRegistration(inputUsername, inputPassword, realName, userDay, userMonth, userYear, favArtist, favGenre, errorMessage, root))
-
-        backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18))
-        backButton.configure(command=lambda: back_clicked(mainTitle, logInButton, signUpButton, quitButton, usernameLabel, usernameEntry, passwordLabel, passwordEntry, errorMessage, completeSignupButton, realNameEntry, realNameLabel, dobLabel, dobFrame, artistLabel, artistEntry, genreLabel, genreEntry, backButton))
-
-        usernameLabel.pack(pady=5)
-        usernameEntry.pack(pady=5)
-        passwordLabel.pack(pady=5)
-        passwordEntry.pack(pady=5)
-        realNameLabel.pack(pady=5)
-        realNameEntry.pack(pady=5)
-        dobLabel.pack(pady=5)
-        dobFrame.pack(fill="x")
-        artistLabel.pack(pady=5)
-        artistEntry.pack(pady=5)
-        genreLabel.pack(pady=5)
-        genreEntry.pack(pady=5)
-        errorMessage.pack(pady=5)
-        completeSignupButton.pack(pady=5)
-        backButton.pack(pady=20)
-
-def main(): #Login Screen
-    root = tk.Tk()
+def main(root): #Login Screen
+    clearScreen(root)
     root.geometry("1440x900")
     root.title("OCRtunes")
 
     mainTitle = tk.Label(root, text="LOGIN/SIGNUP", font=("Arial", 30))
-    logInButton = tk.Button(root, text="Log In", cursor="hand2", font=("Arial", 18))
-    signUpButton = tk.Button(root, text="Sign Up", cursor="hand2", font=("Arial", 18))
+    logInButton = tk.Button(root, text="Log In", cursor="hand2", font=("Arial", 18), command=lambda: loginScreen(root))
+    signUpButton = tk.Button(root, text="Sign Up", cursor="hand2", font=("Arial", 18), command=lambda: signUpScreen(root))
     quitButton = tk.Button(root, text="Quit", command=root.destroy, cursor="hand2", font=("Arial", 18))
-    
-    logInButton.configure(command=lambda: signin_clicked("login", root, mainTitle, logInButton, signUpButton, quitButton))
-    signUpButton.configure(command=lambda: signin_clicked("signup", root, mainTitle, logInButton, signUpButton, quitButton))
 
     mainTitle.pack(pady=50)
     logInButton.pack(pady=50)
@@ -670,4 +746,5 @@ def main(): #Login Screen
     root.mainloop()
 
 if __name__ == "__main__":
-    main()
+    root = tk.Tk()
+    main(root)

@@ -10,7 +10,7 @@ This is a group project created by Zaman, Sam and Nathan.
 - Creating/editing/saving playlists
 - Automatically generating playlists based on user input
 - Saving an artist's songs to a text file that are on the library
-- Library filtered into genres and average length of tracks
+- Genre information displayed on request
 
 ### Extra features included
 

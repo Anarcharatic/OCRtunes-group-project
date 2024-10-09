@@ -7,7 +7,30 @@
         "favArtist": "ken carson",
         "favGenre": "pop",
         "playlists": {
-            "essential": []
+            "really cool": [
+                "Magnolia",
+                "Heart-Shaped Box",
+                "Numb",
+                "Yale"
+            ],
+            "sigma": [
+                "HUMBLE",
+                "Sky"
+            ],
+            "Cool": [
+                "In the End",
+                "Numb",
+                "What I've Done"
+            ]
         }
+    },
+    "ankyj": {
+        "username": "ankyj",
+        "password": "zaman2007",
+        "realName": "anky",
+        "dob": "5/8/1979",
+        "favArtist": "Lenny Kravitz",
+        "favGenre": "Jazz",
+        "playlists": {}
     }
 }

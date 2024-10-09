@@ -24,7 +24,7 @@ song9 = Song("Thriller", "Michael Jackson", "Pop", 357, "https://open.spotify.co
 song10 = Song("Magnolia", "Playboi Carti", "Rap", 181, "https://open.spotify.com/track/1e1JKLEDKP7hEQzJfNAgPl?si=93a7ddd6f10e4a2a")
 song11 = Song("Sky", "Playboi Carti", "Rap", 193, "https://open.spotify.com/track/29TPjc8wxfz4XMn21O7VsZ?si=429339b48c9b484d")
 song12 = Song("Location", "Playboi Carti", "Rap", 168, "https://open.spotify.com/track/3yk7PJnryiJ8mAPqsrujzf?si=f1d43d7e84a9422f")
-song13 = Song("HUMBLE.", "Kendrick Lamar", "Rap", 177, "https://open.spotify.com/track/7KXjTSCq5nL1LoYtL7XAwS?si=ce4e8959529f42af")
+song13 = Song("HUMBLE", "Kendrick Lamar", "Rap", 177, "https://open.spotify.com/track/7KXjTSCq5nL1LoYtL7XAwS?si=ce4e8959529f42af")
 song14 = Song("Money Trees", "Kendrick Lamar", "Rap", 386, "https://open.spotify.com/track/74tLlkN3rgVzRqQJgPfink?si=f9744e39908f4e58")
 song15 = Song("Not Like Us", "Kendrick Lamar", "Rap", 274, "https://open.spotify.com/track/6AI3ezQ4o3HUoP6Dhudph3?si=f87df1d9ba904995")
 song16 = Song("Yale", "Ken Carson", "Rap", 106, "https://open.spotify.com/track/0HTIrbUwwFn984RzVZm5Fk?si=3b2d58504e89435b")
@@ -56,7 +56,7 @@ def artistDiscography():
 def playlistMenu(root, currentUser):
     clearScreen(root)
     mainTitle = tk.Label(root, text="PLAYLIST MENU", font=("Arial", 30))
-    viewPlaylist = tk.Button(root, text="View playlists", font=("Arial", 18), command=lambda: viewPlaylists(root, currentUser))
+    viewPlaylist = tk.Button(root, text="View playlists", font=("Arial", 18), command=lambda: selectPlaylists(root, currentUser))
     editPlaylist = tk.Button(root, text="Edit playlists", font=("Arial", 18), command=lambda: editPlaylists(root, currentUser))
     createPlaylist = tk.Button(root, text="Create playlist", font=("Arial", 18), command=lambda: createPlaylists(root, currentUser))
     autoCreatePlaylist = tk.Button(root, text="Automatically generate playlist", font=("Arial", 18), command=lambda: autoCreatePlaylists(root, currentUser))
@@ -68,7 +68,7 @@ def playlistMenu(root, currentUser):
     autoCreatePlaylist.pack(pady=20)
     backButton.pack(pady=20)
 
-def viewPlaylists(root, currentUser):
+def selectPlaylists(root, currentUser):
     clearScreen(root)
     mainTitle = tk.Label(root, text="VIEW PLAYLISTS", font=("Arial", 30))
     mainTitle.pack()
@@ -78,13 +78,53 @@ def viewPlaylists(root, currentUser):
     viewplaylistScrollbar.pack(side="right", fill="y")
     viewplaylistListBox = tk.Listbox(viewplaylistFrame, yscrollcommand=viewplaylistScrollbar.set, font=("Arial", 18))
 
-    for i in userFile[currentUser]["playlists"]:
-        viewplaylistListBox.insert(tk.END, f"{i}")
+    playlistNames = list(userFile[currentUser]["playlists"].keys())
+
+    if playlistNames: #Confirms that the user actually has playlists in their profile
+        for i in playlistNames:
+            viewplaylistListBox.insert(tk.END, i)
 
     viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
     backButton.pack(pady=25)
+
+    viewplaylistListBox.bind("<<ListboxSelect>>", lambda event: displaySelectedPlaylist(event, root, currentUser, playlistNames))
+
+def displaySelectedPlaylist(event, root, currentUser, playlistNames):
+    widget = event.widget
+    index = widget.curselection()[0]
+    selectedPlaylist = playlistNames[index]
+
+    clearScreen(root)
+
+    mainTitle = tk.Label(root, text="YOUR PLAYLIST", font=("Arial", 30))
+    mainTitle.pack()
+    libraryFrame = tk.Frame(root)
+    libraryFrame.pack(fill="both", expand=True)
+    libraryScrollbar = tk.Scrollbar(libraryFrame)
+    libraryScrollbar.pack(side="right", fill="y")
+    libraryListBox = tk.Listbox(libraryFrame, yscrollcommand=libraryScrollbar.set, font=("Arial", 18))
+
+    for i in userFile[currentUser]["playlists"][selectedPlaylist]:
+        libraryListBox.insert(tk.END, f"Song: {i}")
+    
+    libraryListBox.pack(side="left", fill="both", expand=True)
+
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton.pack(pady=25)
+
+    libraryListBox.bind("<<ListboxSelect>>", lambda event: playSongPlaylist(event, userFile[currentUser]["playlists"][selectedPlaylist]))
+
+def playSongPlaylist(event, selectedPlaylist):
+    widget = event.widget
+    index = widget.curselection()[0]
+    selectedSong = selectedPlaylist[index]
+
+    for i in sortedSongList:
+        if i.title == selectedSong:
+            webbrowser.open(i.link)
+            break
 
 def editPlaylists(root, currentUser):
     clearScreen(root)
@@ -177,6 +217,33 @@ def addSong(event, root, currentUser, currentPlaylist):
 
 def removeSongsPlaylist(root, currentUser, currentPlaylist):
     clearScreen(root)
+    mainTitle = tk.Label(root, text="REMOVE SONG", font=("Arial", 30))
+    mainTitle.pack()
+    libraryFrame = tk.Frame(root)
+    libraryFrame.pack(fill="both", expand=True)
+    libraryScrollbar = tk.Scrollbar(libraryFrame)
+    libraryScrollbar.pack(side="right", fill="y")
+    libraryListBox = tk.Listbox(libraryFrame, yscrollcommand=libraryScrollbar.set, font=("Arial", 18))
+
+    for i in userFile[currentUser]["playlists"][currentPlaylist]:
+        libraryListBox.insert(tk.END, f"Song: {i}") #Specifies all the information about each song
+        #The length of the song is formatted in a stadard way using :02d in order to include the 0 in single digit numbers
+    
+    libraryListBox.pack(side="left", fill="both", expand=True)
+
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    backButton.pack(pady=25)
+
+    libraryListBox.bind("<<ListboxSelect>>", lambda event: removeSong(event, root, currentUser, currentPlaylist))
+
+def removeSong(event, root, currentUser, currentPlaylist):
+    widget = event.widget
+    index = widget.curselection()[0]
+    selectedSong = widget.get(index).split(",")[0].split(": ")[1] #Ensures its only the name of the song
+
+    userFile[currentUser]["playlists"][currentPlaylist].remove(selectedSong)
+    saveUserData()
+    editPlaylists(root, currentUser)
 
 def renameChosenPlaylist(root, currentUser, currentPlaylist):
     clearScreen(root)
@@ -184,7 +251,7 @@ def renameChosenPlaylist(root, currentUser, currentPlaylist):
     mainTitle = tk.Label(root, text="RENAME PLAYLIST", font=("Arial", 30))
     newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
     confirmRenameButton = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: changePlaylistName(root, currentUser, currentPlaylist, str(newPlaylistName.get())))
-    mainTitle.pack()
+    mainTitle.pack(pady=20)
     newPlaylistEntry.pack(pady=20)
     confirmRenameButton.pack(pady=20)
 
@@ -199,7 +266,7 @@ def confirmPlaylistDeletion(root, currentUser, currentPlaylist):
     confirmText = tk.Label(root, text=f"Are you sure you want to delete the playlist {currentPlaylist}?", font=("Arial", 18))
     yesButton = tk.Button(root, text="Yes", cursor="hand2", font=("Arial", 18), command=lambda: deletePlaylist(root, currentUser, currentPlaylist))
     noButton = tk.Button(root, text="No", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    mainTitle.pack()
+    mainTitle.pack(pady=20)
     confirmText.pack(pady=20)
     yesButton.pack(pady=20)
     noButton.pack(pady=20)
@@ -211,13 +278,99 @@ def deletePlaylist(root, currentUser, currentPlaylist):
 
 def createPlaylists(root, currentUser):
     clearScreen(root)
+    newPlaylistName = tk.StringVar()
     mainTitle = tk.Label(root, text="CREATE PLAYLISTS", font=("Arial", 30))
+    newPlaylistLabel = tk.Label(root, text="Name of new playlist:", font=("Arial", 18))
+    newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
+    confirmPlaylistCreation = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: createNewPlaylist(root, currentUser, str(newPlaylistName.get())))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+    mainTitle.pack(pady=20)
+    newPlaylistLabel.pack(pady=20)
+    newPlaylistEntry.pack(pady=20)
+    confirmPlaylistCreation.pack(pady=20)
+    backButton.pack(pady=20)
+
+def createNewPlaylist(root, currentUser, newPlaylistName):
+    userFile[currentUser]["playlists"].update({newPlaylistName: []})
+    saveUserData()
+    mainMenu(root, currentUser)
 
 def autoCreatePlaylists(root, currentUser):
     clearScreen(root)
+    newPlaylistName = tk.StringVar()
+    timeLimit = tk.StringVar()
+    selectedGenre = tk.StringVar(value="None")
     mainTitle = tk.Label(root, text="AUTO GENERATE PLAYLISTS", font=("Arial", 30))
+    newPlaylistLabel = tk.Label(root, text="Name of new playlist:", font=("Arial", 18))
+    newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
+    timeLimitLabel = tk.Label(root, text="Enter in a time limit for the playlist (minutes):", font=("Arial", 18))
+    timeLimitEntry = tk.Entry(root, textvariable=timeLimit)
+    genreSelectionLabel = tk.Label(root, text="Select a genre for the label to be: ", font=("Arial", 18))
+    currentGenreSelected = tk.Label(root, text="Current genre: None", font=("Arial", 18))
 
+    genreFrame = tk.Frame(root)
+    genreFrame.columnconfigure(0, weight=1)
+    genreFrame.columnconfigure(1, weight=1)
+    genreFrame.columnconfigure(2, weight=1)
+    genreFrame.columnconfigure(3, weight=1)
+    genreFrame.columnconfigure(4, weight=1)
+    genreFrame.columnconfigure(5, weight=1)
 
+    metalButton = tk.Button(genreFrame, text="Metal", cursor="hand2", font=("Arial", 18), command=lambda: editGenre(currentGenreSelected, selectedGenre, "Metal"))
+    metalButton.grid(row=0, column=0)
+    grungeButton = tk.Button(genreFrame, text="Grunge", cursor="hand2", font=("Arial", 18), command=lambda: editGenre(currentGenreSelected, selectedGenre, "Grunge"))
+    grungeButton.grid(row=0, column=1)
+    popButton = tk.Button(genreFrame, text="Pop", cursor="hand2", font=("Arial", 18), command=lambda: editGenre(currentGenreSelected, selectedGenre, "Pop"))
+    popButton.grid(row=0, column=2)
+    rapButton = tk.Button(genreFrame, text="Rap", cursor="hand2", font=("Arial", 18), command=lambda: editGenre(currentGenreSelected, selectedGenre, "Rap"))
+    rapButton.grid(row=0, column=3)
+    indieButton = tk.Button(genreFrame, text="Indie", cursor="hand2", font=("Arial", 18), command=lambda: editGenre(currentGenreSelected, selectedGenre, "Indie"))
+    indieButton.grid(row=0, column=4)
+    noneButton = tk.Button(genreFrame, text="None (All genres)", cursor="hand2", font=("Arial", 18), command=lambda: editGenre(currentGenreSelected, selectedGenre, "None"))
+    noneButton.grid(row=0, column=5)
+
+    errorMessage = tk.Label(root, text="", font=("Arial", 18), fg="red")
+    confirmButton = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: autoCreateNewPlaylist(root, currentUser, str(timeLimit.get()), str(newPlaylistName.get()), str(selectedGenre.get()), errorMessage))
+    backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
+
+    mainTitle.pack(pady=20)
+    newPlaylistLabel.pack(pady=20)
+    newPlaylistEntry.pack(pady=20)
+    timeLimitLabel.pack(pady=20)
+    timeLimitEntry.pack(pady=20)
+    genreSelectionLabel.pack(pady=20)
+    currentGenreSelected.pack(pady=20)
+    genreFrame.pack(pady=20)
+    errorMessage.pack()
+    confirmButton.pack(pady=20)
+    backButton.pack(pady=20)
+
+def editGenre(currentGenreSelected, selectedGenre, newGenre):
+    selectedGenre.set(newGenre)
+    currentGenreSelected.configure(text=f"Current genre: {newGenre}")
+
+def autoCreateNewPlaylist(root, currentUser, timeLimit, newPlaylistName, selectedGenre, errorMessage):
+    if not timeLimit.isnumeric():
+        errorMessage.configure(text="You did not enter in a valid number, please try again.")
+        return
+    
+    playlist = []
+    currentTime = int(timeLimit)
+
+    for i in sortedSongList:
+        if (i.genre == selectedGenre or selectedGenre == "None") and currentTime > (i.length // 60):
+            currentTime -= (i.length // 60)
+            playlist.append(i.title)
+    
+    if playlist == []:
+        errorMessage.configure(text="You did not enter in a long enough time.")
+        return
+    
+    userFile[currentUser]["playlists"].update({newPlaylistName: playlist})
+    saveUserData()
+    mainMenu(root, currentUser)
+
+    #auto generate the playlist
 
 def libraryMenu(root, currentUser): #Shows a variety of songs which the user can click on to play
     clearScreen(root)
@@ -453,7 +606,7 @@ def signin_clicked(buttonFunc, root, mainTitle, logInButton, signUpButton, quitB
         userMonth = tk.StringVar()
         userYear = tk.StringVar()
 
-        dobLabel = tk.Label(root, text="Date of birth (DD/MM/YY): ", font=("Arial", 18))
+        dobLabel = tk.Label(root, text="Date of birth (DD/MM/YYYY): ", font=("Arial", 18))
         dobFrame = tk.Frame(root)
         dobFrame.columnconfigure(0, weight=1)
         dobFrame.columnconfigure(1, weight=1)

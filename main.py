@@ -62,7 +62,7 @@ def clearScreen(root):
 def genreInfo(root, currentUser):
     clearScreen(root)
     mainTitle = tk.Label(root, text="GENRE INFORMATION", font=("Arial", 30))
-    mainTitle.pack(pady=20)
+    mainTitle.pack(pady=10)
     genreFrame = tk.Frame(root)
     genreFrame.pack(fill="both", expand=True)
     genreScrollbar = tk.Scrollbar(genreFrame)
@@ -79,7 +79,7 @@ def genreInfo(root, currentUser):
     genreListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     genreListBox.bind("<<ListboxSelect>>", lambda event: showGenreInfo(event, root, currentUser, insertedGenres))
 
@@ -106,11 +106,11 @@ def showGenreInfo(event, root, currentUser, insertedGenres):
     avgLengthLabel = tk.Label(root, text=f"Average length of all songs in the library of {selectedGenre}: {averageLength // 60}m {averageLength - ((averageLength // 60) * 60)}s", font=("Arial", 18))
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: genreInfo(root, currentUser))
 
-    mainTitle.pack(pady=20)
-    numSongsLabel.pack(pady=20)
-    totalLengthLabel.pack(pady=20)
-    avgLengthLabel.pack(pady=20)
-    backButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    numSongsLabel.pack(pady=10)
+    totalLengthLabel.pack(pady=10)
+    avgLengthLabel.pack(pady=10)
+    backButton.pack(pady=10)
 
 #Functionality for saving songs by a specific artist into a text file
 
@@ -149,13 +149,13 @@ def artistDiscography(root, currentUser):
     confirmButton = tk.Button(root, text="Save to text file", cursor="hand2", font=("Arial", 18), command=lambda: saveToFile(str(selectedArtist.get()), errorMessage))
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
 
-    mainTitle.pack(pady=20)
-    selectArtistLabel.pack(pady=20)
-    currentArtistSelected.pack(pady=20)
-    artistFrame.pack(pady=20)
-    errorMessage.pack(pady=20)
-    confirmButton.pack(pady=20)
-    backButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    selectArtistLabel.pack(pady=10)
+    currentArtistSelected.pack(pady=10)
+    artistFrame.pack(pady=10)
+    errorMessage.pack(pady=10)
+    confirmButton.pack(pady=10)
+    backButton.pack(pady=10)
     #Artists songs can be saved to a text file
 
 def editArtist(currentArtistSelected, selectedArtist, newArtist):
@@ -192,12 +192,12 @@ def playlistMenu(root, currentUser):
     createPlaylist = tk.Button(root, text="Create playlist", font=("Arial", 18), command=lambda: createPlaylists(root, currentUser))
     autoCreatePlaylist = tk.Button(root, text="Automatically generate playlist", font=("Arial", 18), command=lambda: autoCreatePlaylists(root, currentUser))
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    mainTitle.pack(pady=20)
-    viewPlaylist.pack(pady=20)
-    editPlaylist.pack(pady=20)
-    createPlaylist.pack(pady=20)
-    autoCreatePlaylist.pack(pady=20)
-    backButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    viewPlaylist.pack(pady=10)
+    editPlaylist.pack(pady=10)
+    createPlaylist.pack(pady=10)
+    autoCreatePlaylist.pack(pady=10)
+    backButton.pack(pady=10)
 
 def selectPlaylists(root, currentUser):
     clearScreen(root)
@@ -218,7 +218,7 @@ def selectPlaylists(root, currentUser):
     viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     viewplaylistListBox.bind("<<ListboxSelect>>", lambda event: displaySelectedPlaylist(event, root, currentUser, playlistNames))
 
@@ -243,7 +243,7 @@ def displaySelectedPlaylist(event, root, currentUser, playlistNames):
     libraryListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     libraryListBox.bind("<<ListboxSelect>>", lambda event: playSongPlaylist(event, userFile[currentUser]["playlists"][selectedPlaylist]))
 
@@ -265,12 +265,12 @@ def editPlaylists(root, currentUser):
     renamePlaylist = tk.Button(root, text="Rename a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "rename"))
     deletePlaylist = tk.Button(root, text="Delete a playlist", font=("Arial", 18), command=lambda: playlistSelection(root, currentUser, "delete"))
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: playlistMenu(root, currentUser))
-    mainTitle.pack(pady=20)
-    addSongs.pack(pady=20)
-    removeSongs.pack(pady=20)
-    renamePlaylist.pack(pady=20)
-    deletePlaylist.pack(pady=20)
-    backButton.pack(pady=25)
+    mainTitle.pack(pady=10)
+    addSongs.pack(pady=10)
+    removeSongs.pack(pady=10)
+    renamePlaylist.pack(pady=10)
+    deletePlaylist.pack(pady=10)
+    backButton.pack(pady=10)
 
 def playlistSelection(root, currentUser, playlistFunc):
     clearScreen(root)
@@ -298,7 +298,7 @@ def playlistSelection(root, currentUser, playlistFunc):
     viewplaylistListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: editPlaylists(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     viewplaylistListBox.bind("<<ListboxSelect>>", lambda event: processPlaylist(event, root, currentUser, playlistFunc, playlistNames))
 
@@ -333,7 +333,7 @@ def addSongsPlaylist(root, currentUser, currentPlaylist):
     libraryListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     libraryListBox.bind("<<ListboxSelect>>", lambda event: addSong(event, root, currentUser, currentPlaylist))
 
@@ -363,7 +363,7 @@ def removeSongsPlaylist(root, currentUser, currentPlaylist):
     libraryListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     libraryListBox.bind("<<ListboxSelect>>", lambda event: removeSong(event, root, currentUser, currentPlaylist))
 
@@ -382,9 +382,9 @@ def renameChosenPlaylist(root, currentUser, currentPlaylist):
     mainTitle = tk.Label(root, text="RENAME PLAYLIST", font=("Arial", 30))
     newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
     confirmRenameButton = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: changePlaylistName(root, currentUser, currentPlaylist, str(newPlaylistName.get())))
-    mainTitle.pack(pady=20)
-    newPlaylistEntry.pack(pady=20)
-    confirmRenameButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    newPlaylistEntry.pack(pady=10)
+    confirmRenameButton.pack(pady=10)
 
 def changePlaylistName(root, currentUser, currentPlaylist, newPlaylistName):
     userFile[currentUser]["playlists"][newPlaylistName] = userFile[currentUser]["playlists"].pop(currentPlaylist) #replaces the key, which is the name of the playlist
@@ -397,10 +397,10 @@ def confirmPlaylistDeletion(root, currentUser, currentPlaylist):
     confirmText = tk.Label(root, text=f"Are you sure you want to delete the playlist {currentPlaylist}?", font=("Arial", 18))
     yesButton = tk.Button(root, text="Yes", cursor="hand2", font=("Arial", 18), command=lambda: deletePlaylist(root, currentUser, currentPlaylist))
     noButton = tk.Button(root, text="No", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    mainTitle.pack(pady=20)
-    confirmText.pack(pady=20)
-    yesButton.pack(pady=20)
-    noButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    confirmText.pack(pady=10)
+    yesButton.pack(pady=10)
+    noButton.pack(pady=10)
 
 def deletePlaylist(root, currentUser, currentPlaylist):
     userFile[currentUser]["playlists"].pop(currentPlaylist)
@@ -415,11 +415,11 @@ def createPlaylists(root, currentUser):
     newPlaylistEntry = tk.Entry(root, textvariable=newPlaylistName)
     confirmPlaylistCreation = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: createNewPlaylist(root, currentUser, str(newPlaylistName.get())))
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    mainTitle.pack(pady=20)
-    newPlaylistLabel.pack(pady=20)
-    newPlaylistEntry.pack(pady=20)
-    confirmPlaylistCreation.pack(pady=20)
-    backButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    newPlaylistLabel.pack(pady=10)
+    newPlaylistEntry.pack(pady=10)
+    confirmPlaylistCreation.pack(pady=10)
+    backButton.pack(pady=10)
 
 def createNewPlaylist(root, currentUser, newPlaylistName):
     userFile[currentUser]["playlists"].update({newPlaylistName: []})
@@ -464,17 +464,17 @@ def autoCreatePlaylists(root, currentUser):
     confirmButton = tk.Button(root, text="Confirm", cursor="hand2", font=("Arial", 18), command=lambda: autoCreateNewPlaylist(root, currentUser, str(timeLimit.get()), str(newPlaylistName.get()), str(selectedGenre.get()), errorMessage))
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
 
-    mainTitle.pack(pady=20)
-    newPlaylistLabel.pack(pady=20)
-    newPlaylistEntry.pack(pady=20)
-    timeLimitLabel.pack(pady=20)
-    timeLimitEntry.pack(pady=20)
-    genreSelectionLabel.pack(pady=20)
-    currentGenreSelected.pack(pady=20)
-    genreFrame.pack(pady=20)
+    mainTitle.pack(pady=10)
+    newPlaylistLabel.pack(pady=10)
+    newPlaylistEntry.pack(pady=10)
+    timeLimitLabel.pack(pady=10)
+    timeLimitEntry.pack(pady=10)
+    genreSelectionLabel.pack(pady=10)
+    currentGenreSelected.pack(pady=10)
+    genreFrame.pack(pady=10)
     errorMessage.pack()
-    confirmButton.pack(pady=20)
-    backButton.pack(pady=20)
+    confirmButton.pack(pady=10)
+    backButton.pack(pady=10)
 
 def editGenre(currentGenreSelected, selectedGenre, newGenre):
     selectedGenre.set(newGenre)
@@ -520,7 +520,7 @@ def libraryMenu(root, currentUser): #Shows a variety of songs which the user can
     libraryListBox.pack(side="left", fill="both", expand=True)
 
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18), command=lambda: mainMenu(root, currentUser))
-    backButton.pack(pady=25)
+    backButton.pack(pady=10)
 
     libraryListBox.bind("<<ListboxSelect>>", lambda event: songSelected(event)) #Creates functionality for when the user clicks on a song
 
@@ -549,10 +549,10 @@ def editFavouriteGenre(root, currentUser):
 
     confirmButton.configure(command=lambda: changeFavouriteGenre(str(newFavGenre.get()), currentUser, root))
 
-    mainTitle.pack(pady=20)
-    enterGenre.pack(pady=20)
-    genreEntry.pack(pady=20)
-    confirmButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    enterGenre.pack(pady=10)
+    genreEntry.pack(pady=10)
+    confirmButton.pack(pady=10)
 
 #Functionality for changing the favourite artist of the user
 
@@ -572,10 +572,10 @@ def editFavouriteArtist(root, currentUser):
 
     confirmButton.configure(command=lambda: changeFavouriteArtist(str(newFavArtist.get()), currentUser, root))
 
-    mainTitle.pack(pady=20)
-    enterArtist.pack(pady=20)
-    artistEntry.pack(pady=20)
-    confirmButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    enterArtist.pack(pady=10)
+    artistEntry.pack(pady=10)
+    confirmButton.pack(pady=10)
 
 #The main menu where all functions of the program are accessible
 
@@ -590,14 +590,14 @@ def mainMenu(root, currentUser):
     viewGenreButton = tk.Button(root, text="View genres", cursor="hand2", font=("Arial", 18), command=lambda: genreInfo(root, currentUser))
     quitButton = tk.Button(root, text="Quit", command=root.destroy, cursor="hand2", font=("Arial", 18))
 
-    mainTitle.pack(pady=20)
-    artistButton.pack(pady=20)
-    genreButton.pack(pady=20)
-    libraryButton.pack(pady=20)
-    playlistButton.pack(pady=20)
-    discographyButton.pack(pady=20)
-    viewGenreButton.pack(pady=20)
-    quitButton.pack(pady=20)
+    mainTitle.pack(pady=10)
+    artistButton.pack(pady=10)
+    genreButton.pack(pady=10)
+    libraryButton.pack(pady=10)
+    playlistButton.pack(pady=10)
+    discographyButton.pack(pady=10)
+    viewGenreButton.pack(pady=10)
+    quitButton.pack(pady=10)
 
 # Functionality for the user logging in
 
@@ -617,14 +617,14 @@ def loginScreen(root):
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18))
     backButton.configure(command=lambda: main(root))
 
-    mainTitle.pack(pady=20)
+    mainTitle.pack(pady=10)
     usernameLabel.pack(pady=5)
-    usernameEntry.pack(pady=20)
+    usernameEntry.pack(pady=10)
     passwordLabel.pack(pady=5)
-    passwordEntry.pack(pady=20)
+    passwordEntry.pack(pady=10)
     errorMessage.pack(pady=5)
-    loginButton.pack(pady=20)
-    backButton.pack(pady=50)
+    loginButton.pack(pady=10)
+    backButton.pack(pady=10)
 
 def userLogin(inputUsername, inputPassword, errorMessage, root):
     username = inputUsername.get()
@@ -690,11 +690,11 @@ def signUpScreen(root):
     backButton = tk.Button(root, text="Go Back", cursor="hand2", font=("Arial", 18))
     backButton.configure(command=lambda: main(root))
 
-    mainTitle.pack(pady=20)
+    mainTitle.pack(pady=10)
     usernameLabel.pack(pady=5)
-    usernameEntry.pack(pady=20)
+    usernameEntry.pack(pady=10)
     passwordLabel.pack(pady=5)
-    passwordEntry.pack(pady=20)
+    passwordEntry.pack(pady=10)
     realNameLabel.pack(pady=5)
     realNameEntry.pack(pady=5)
     dobLabel.pack(pady=5)
@@ -705,7 +705,7 @@ def signUpScreen(root):
     genreEntry.pack(pady=5)
     errorMessage.pack(pady=5)
     completeSignupButton.pack(pady=5)
-    backButton.pack(pady=20)
+    backButton.pack(pady=10)
 
 def userRegistration(inputUsername, inputPassword, realName, userDay, userMonth, userYear, favArtist, favGenre, errorMessage, root):
 
